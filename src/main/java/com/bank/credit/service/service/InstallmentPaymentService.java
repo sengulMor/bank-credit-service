@@ -2,6 +2,7 @@ package com.bank.credit.service.service;
 
 import com.bank.credit.service.dto.InstallmentDto;
 import com.bank.credit.service.dto.PayedInstallmentDto;
+import com.bank.credit.service.exception.CustomerNotFoundException;
 import com.bank.credit.service.exception.InvalidPaymentAmountException;
 import com.bank.credit.service.exception.UnpaidInstallmentsNotFoundException;
 import com.bank.credit.service.model.Customer;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service responsible for managing loan installment payments.
@@ -75,7 +75,7 @@ public class InstallmentPaymentService {
 
         return buildPaymentInstallmentDto(toPay.size(), totalPayment, paymentCompleted);
     }
-    
+
     /**
      * Retrieves unpaid installments for a given loan within the next 3 months.
      *
@@ -119,12 +119,12 @@ public class InstallmentPaymentService {
      * @param totalPayment the total amount paid toward installments
      */
     private void updateCustomerCreditLimit(Long loanId, BigDecimal totalPayment) {
-        Optional<Customer> customer = customerRepository.findByLoans_Id(loanId);
-        customer.ifPresent(c -> {
-            BigDecimal newLimit = c.getUsedCreditLimit().subtract(totalPayment);
-            c.setUsedCreditLimit(newLimit);
-            customerRepository.save(c);
-        });
+        Customer customer = customerRepository.findByLoans_Id(loanId)
+                .orElseThrow(CustomerNotFoundException::new);
+
+        BigDecimal newLimit = customer.getUsedCreditLimit().subtract(totalPayment);
+        customer.setUsedCreditLimit(newLimit);
+        customerRepository.save(customer);
     }
 
     /**

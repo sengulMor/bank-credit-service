@@ -5,4 +5,8 @@ public class CustomerNotFoundException extends RuntimeException {
     public CustomerNotFoundException(Long id) {
         super("Customer with ID " + id + " not found");
     }
+
+    public CustomerNotFoundException() {
+        super("No customer found");
+    }
 }
