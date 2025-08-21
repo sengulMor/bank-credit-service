@@ -1,9 +1,5 @@
-package com.bank.credit.service.error;
+package com.bank.credit.service.exception;
 
-import com.bank.credit.service.exception.CustomerNotFoundException;
-import com.bank.credit.service.exception.GlobalExceptionHandler;
-import com.bank.credit.service.exception.InvalidPaymentAmountException;
-import com.bank.credit.service.exception.UnpaidInstallmentsNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
