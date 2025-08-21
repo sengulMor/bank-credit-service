@@ -97,4 +97,20 @@ public class GlobalExceptionHandler {
         return error;
     }
 
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<String> handleCustomerNotFound(CustomerNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidPaymentAmountException.class)
+    public ResponseEntity<String> handleInvalidPaymentAmountException(InvalidPaymentAmountException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+
+    @ExceptionHandler(UnpaidInstallmentsNotFoundException.class)
+    public ResponseEntity<String> handleUnpaidInstallmentsNotFoundException(UnpaidInstallmentsNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
 }

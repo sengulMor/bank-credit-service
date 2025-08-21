@@ -152,7 +152,11 @@ class InstallmentPaymentServiceTest {
         when(customerRepository.findByLoans_Id(loanId)).thenReturn(Optional.empty());
 
         // When
-        assertThrows(CustomerNotFoundException.class, () -> installmentPaymentService.payInstallment(dto));
+        CustomerNotFoundException ex = assertThrows(CustomerNotFoundException.class, () -> {
+            installmentPaymentService.payInstallment(dto);
+        });
+        assertEquals("No customer found", ex.getMessage());
+
         // Then
         verify(loanInstallmentRepository).saveAll(any());
     }
@@ -169,7 +173,12 @@ class InstallmentPaymentServiceTest {
                 .thenReturn(installments);
 
         // When / Then
-        assertThrows(InvalidPaymentAmountException.class, () -> installmentPaymentService.payInstallment(dto));
+
+        InvalidPaymentAmountException ex = assertThrows(InvalidPaymentAmountException.class, () -> {
+            installmentPaymentService.payInstallment(dto);
+        });
+        assertEquals("Amount too small to cover any installment for loan by ID " + loanId, ex.getMessage());
+
     }
 
     @Test
@@ -181,7 +190,10 @@ class InstallmentPaymentServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // When / Then
-        assertThrows(UnpaidInstallmentsNotFoundException.class, () -> installmentPaymentService.payInstallment(dto));
+        UnpaidInstallmentsNotFoundException ex = assertThrows(UnpaidInstallmentsNotFoundException.class, () -> {
+            installmentPaymentService.payInstallment(dto);
+        });
+        assertEquals("No unpaid installments found for Loan ID " + loanId + " within the upcoming 3 calendar months.", ex.getMessage());
     }
 
 

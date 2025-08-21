@@ -86,9 +86,12 @@ class CreditServiceTest {
         when(customerRepository.findById(creditDto.getCustomerId())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(CustomerNotFoundException.class, () -> {
+        CustomerNotFoundException ex = assertThrows(CustomerNotFoundException.class, () -> {
             creditService.create(creditDto);
         });
+        assertEquals("Customer with ID 1 not found", ex.getMessage());
+
+
         verify(loanMapper, never()).toEntity(any(), any(), any());
         verify(loanInstallmentService, never()).buildLoanInstallments(any());
         verify(loanRepository, never()).save(any());
