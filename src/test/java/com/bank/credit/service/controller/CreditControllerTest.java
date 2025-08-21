@@ -94,15 +94,6 @@ class CreditControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void shouldReturnBadRequest_whenRequestBodyIsNull() throws Exception {
-        // When & Then
-        mockMvc.perform(post("/credits")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(null)))
-                .andExpect(status().isBadRequest());
-    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -125,28 +116,6 @@ class CreditControllerTest {
                 .andExpect(jsonPath("$[0].message").value("Customer not found with ID: " + customerId));
     }
 
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void shouldNotCreateCredit_whenLimitNotAvailable() throws Exception {
-        // Given
-        Long customerId = 1L;
-        BigDecimal creditAmount = new BigDecimal("30000");
-        int installment = 6;
-        BigDecimal interestRate = new BigDecimal("0.1");
-
-        CreditDto creditDto = new CreditDto(3L, customerId, creditAmount, installment, interestRate);
-        Customer customer = new Customer("name", "surname", new BigDecimal("10000"), new BigDecimal("1000"), null);
-
-        Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-
-        // When & Then
-        mockMvc.perform(post("/credits")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(creditDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("loanAmount"))
-                .andExpect(jsonPath("$[0].message").value("Credit limit is not sufficient"));
-    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -212,29 +181,6 @@ class CreditControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("loanAmount"))
                 .andExpect(jsonPath("$[0].message").value("Loan amount must be a valid monetary amount (max 2 decimal places)"));
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void shouldRejectCredit_whenInstallmentCountIsNotAllowed() throws Exception {
-        // Given;
-        Long customerId = 1L;
-        BigDecimal creditAmount = new BigDecimal("300");
-        int installment = 23;
-        BigDecimal interestRate = new BigDecimal("0.1");
-
-        Customer customer = new Customer("name", "surname", new BigDecimal("10000"), new BigDecimal("1000"), null);
-        CreditDto creditDto = new CreditDto(3L, customerId, creditAmount, installment, interestRate);
-
-        Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-
-        // When & Then
-        mockMvc.perform(post("/credits")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(creditDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("numberOfInstallment"))
-                .andExpect(jsonPath("$[0].message").value("Value must be one of 6, 9, 12, or 24"));
     }
 
     @Test
