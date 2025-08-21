@@ -13,15 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @Slf4j
 @RestController
-@RequestMapping("/installment")
+@RequestMapping("/installments")
 public class InstallmentController {
 
     private final LoanInstallmentService installmentService;
     private final InstallmentPaymentService installmentPaymentService;
-
 
     public InstallmentController(LoanInstallmentService installmentService,
                                  InstallmentPaymentService installmentPaymentService) {
@@ -35,13 +33,13 @@ public class InstallmentController {
      * @param loanId the ID of the loan
      * @return list of installments
      */
-    @GetMapping("/{loanId}")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<InstallmentDto>> getInstallmentsByLoan(@PathVariable("loanId") Long loanId) {
+    public ResponseEntity<List<InstallmentDto>> getInstallmentsByLoan(@RequestParam("loanId") Long loanId) {
         log.info("Getting all installments for loan id {}", loanId);
         List<InstallmentDto> installments = installmentService.getByLoan(loanId);
         if (installments.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(installments);
     }

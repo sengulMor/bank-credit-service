@@ -29,13 +29,13 @@ public class Loan extends BaseEntity {
     private Integer numberOfInstallment;
 
     @NotNull
-    @Column
+    @Column(precision = 7, scale = 6)
     private BigDecimal interestRate;
 
     private boolean isPaid;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)

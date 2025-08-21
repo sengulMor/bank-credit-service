@@ -1,11 +1,7 @@
 package com.bank.credit.service.dto;
 
-import com.bank.credit.service.model.Loan;
-import com.bank.credit.service.validation.IsLimitAvailable;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +20,9 @@ public class InstallmentDto {
     @NotNull(message = "Loan Id is required")
     private Long loanId;
 
-    @Column(precision = 15, scale = 2)
     @NotNull(message = "Loan amount is required")
     @DecimalMin(value = "100")
+    @Digits(integer = 10, fraction = 2, message = "Amount must be a valid percentage (max 2 decimal places)")
     private BigDecimal amount;
 
     private BigDecimal paidAmount;

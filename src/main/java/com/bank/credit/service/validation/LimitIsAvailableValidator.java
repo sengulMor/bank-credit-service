@@ -7,10 +7,11 @@ import com.bank.credit.service.util.LoanCalculator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 
 @Component
-public class LimitIsAvailableValidator implements ConstraintValidator<IsLimitAvailable, CreditDto>  {
+public class LimitIsAvailableValidator implements ConstraintValidator<IsLimitAvailable, CreditDto> {
 
     private final CustomerRepository customerRepository;
 
@@ -21,7 +22,7 @@ public class LimitIsAvailableValidator implements ConstraintValidator<IsLimitAva
     @Override
     public boolean isValid(CreditDto dto, ConstraintValidatorContext context) {
         if (dto == null) {
-            return true;
+            return false;
         }
         Customer customer = getCustomer(dto.getCustomerId(), context);
         if (customer == null) {
@@ -38,7 +39,7 @@ public class LimitIsAvailableValidator implements ConstraintValidator<IsLimitAva
 
     private Customer getCustomer(Long customerId, ConstraintValidatorContext context) {
         return customerRepository.findById(customerId).orElseGet(() -> {
-            addViolation(context, "customerId","Customer not found with ID: " + customerId);
+            addViolation(context, "customerId", "Customer not found with ID: " + customerId);
             return null;
         });
     }

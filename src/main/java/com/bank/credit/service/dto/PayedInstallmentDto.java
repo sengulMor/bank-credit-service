@@ -1,6 +1,5 @@
 package com.bank.credit.service.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +17,5 @@ public class PayedInstallmentDto {
 
     private BigDecimal totalAmountSpent;
 
-    private boolean LoanPaymentComplate;
+    private boolean loanPaymentComplate;
 }

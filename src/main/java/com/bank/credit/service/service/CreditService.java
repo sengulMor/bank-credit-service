@@ -38,12 +38,12 @@ public class CreditService {
 
     private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
-    private final CustomerRepository  customerRepository;
+    private final CustomerRepository customerRepository;
     private final LoanInstallmentService loanInstallmentService;
 
     public CreditService(LoanRepository loanRepository,
                          LoanMapper loanMapper,
-                         CustomerRepository  customerRepository,
+                         CustomerRepository customerRepository,
                          LoanInstallmentService loanInstallmentService) {
         this.loanRepository = loanRepository;
         this.loanMapper = loanMapper;
@@ -65,7 +65,7 @@ public class CreditService {
         Customer customer = getCustomer(dto);
         Loan loan = loanMapper.toEntity(dto, customer, totalAmount);
         List<LoanInstallment> installments = loanInstallmentService.buildLoanInstallments(loan);
-        loan.getInstallments().addAll(installments);
+        loan.setInstallments(installments);
         Loan savedLoan = loanRepository.save(loan);
         updateUsedCreditLimit(totalAmount, customer);
         return loanMapper.toDto(savedLoan);
@@ -75,7 +75,7 @@ public class CreditService {
      * Updates the customer's used credit limit.
      *
      * @param totalAmount amount with interestRate
-     * @param customer the customer details
+     * @param customer    the customer details
      */
     private void updateUsedCreditLimit(BigDecimal totalAmount, Customer customer) {
         BigDecimal updatedUsedLimit = customer.getUsedCreditLimit().add(totalAmount);
@@ -90,8 +90,8 @@ public class CreditService {
      * @throws CustomerNotFoundException if the customer does not exist
      */
     private Customer getCustomer(CreditDto dto) {
-       return customerRepository.findById(dto.getCustomerId())
-               .orElseThrow(() -> new CustomerNotFoundException(dto.getCustomerId()));
+        return customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new CustomerNotFoundException(dto.getCustomerId()));
     }
 
     /**
@@ -101,7 +101,6 @@ public class CreditService {
      * @param filter   the loan filter containing optional criteria like number of installments and isPaid
      * @param pageable the pagination and sorting information
      * @return a page of {@link CreditDto} matching the given filters
-     *
      * @throws IllegalArgumentException if customerId in the filter is null
      */
     @Transactional(readOnly = true)

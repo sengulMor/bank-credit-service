@@ -4,7 +4,6 @@ import com.bank.credit.service.dto.InstallmentDto;
 import com.bank.credit.service.dto.PayedInstallmentDto;
 import com.bank.credit.service.exception.InvalidPaymentAmountException;
 import com.bank.credit.service.exception.UnpaidInstallmentsNotFoundException;
-import com.bank.credit.service.mapper.InstallmentMapper;
 import com.bank.credit.service.model.Customer;
 import com.bank.credit.service.model.Loan;
 import com.bank.credit.service.model.LoanInstallment;
@@ -32,13 +31,13 @@ import java.util.Optional;
 @Service
 public class InstallmentPaymentService {
 
-    private  final LoanInstallmentRepository loanInstallmentRepository;
-    private  final CustomerRepository customerRepository;
-    private  final LoanRepository loanRepository;
+    private final LoanInstallmentRepository loanInstallmentRepository;
+    private final CustomerRepository customerRepository;
+    private final LoanRepository loanRepository;
 
     public InstallmentPaymentService(LoanInstallmentRepository loanInstallmentRepository,
                                      CustomerRepository customerRepository,
-                                     LoanRepository loanRepository){
+                                     LoanRepository loanRepository) {
         this.loanInstallmentRepository = loanInstallmentRepository;
         this.customerRepository = customerRepository;
         this.loanRepository = loanRepository;
@@ -52,7 +51,7 @@ public class InstallmentPaymentService {
      *
      * @param dto the installment payment data containing loan ID and payment amount
      * @return a {@link PayedInstallmentDto} containing summary info about the payment
-     * @throws InvalidPaymentAmountException if the amount cannot cover at least one installment
+     * @throws InvalidPaymentAmountException       if the amount cannot cover at least one installment
      * @throws UnpaidInstallmentsNotFoundException if no unpaid installments are found in the next 3 months
      */
     @Transactional
@@ -63,7 +62,6 @@ public class InstallmentPaymentService {
 
         BigDecimal installmentAmount = unpaidInstallments.get(0).getAmount();
         int numToPay = LoanCalculator.calculateInstallmentsToPay(dto.getAmount(), installmentAmount);
-
         if (numToPay == 0) {
             throw new InvalidPaymentAmountException(loanId);
         }
@@ -71,20 +69,17 @@ public class InstallmentPaymentService {
         List<LoanInstallment> toPay = prepareInstallmentsAsPaid(unpaidInstallments, numToPay, paymentDate);
         loanInstallmentRepository.saveAll(toPay);
 
-
         BigDecimal totalPayment = LoanCalculator.calculateTotalPayment(installmentAmount, toPay.size());
         updateCustomerCreditLimit(loanId, totalPayment);
+        boolean paymentCompleted = loanPaymentCompleted(loanId, unpaidInstallments);
 
-        boolean paymentCompleted = checkLoanIsPaymentCompleted(loanId, unpaidInstallments);
-
-        return buildPayedInstallmentDto(toPay.size(), totalPayment, paymentCompleted);
+        return buildPaymentInstallmentDto(toPay.size(), totalPayment, paymentCompleted);
     }
-
-
+    
     /**
      * Retrieves unpaid installments for a given loan within the next 3 months.
      *
-     * @param loanId the loan ID
+     * @param loanId      the loan ID
      * @param paymentDate the reference date (usually today)
      * @return a list of unpaid {@link LoanInstallment}s
      * @throws UnpaidInstallmentsNotFoundException if no unpaid installments are found in the period
@@ -102,8 +97,8 @@ public class InstallmentPaymentService {
      * Marks the specified number of unpaid installments as paid with today's date.
      *
      * @param installments the list of unpaid installments
-     * @param numToPay how many installments to mark as paid
-     * @param paymentDate the date of payment
+     * @param numToPay     how many installments to mark as paid
+     * @param paymentDate  the date of payment
      * @return a list of installments marked as paid
      */
     private List<LoanInstallment> prepareInstallmentsAsPaid(List<LoanInstallment> installments, int numToPay, LocalDate paymentDate) {
@@ -120,7 +115,7 @@ public class InstallmentPaymentService {
     /**
      * Updates the customer's used credit limit by subtracting the total payment.
      *
-     * @param loanId the loan ID whose customer will be updated
+     * @param loanId       the loan ID whose customer will be updated
      * @param totalPayment the total amount paid toward installments
      */
     private void updateCustomerCreditLimit(Long loanId, BigDecimal totalPayment) {
@@ -137,11 +132,11 @@ public class InstallmentPaymentService {
      * <p>
      * If no unpaid installments remain, the loan is marked as fully paid.
      *
-     * @param loanId the loan ID
+     * @param loanId             the loan ID
      * @param unpaidInstallments the previously fetched unpaid installments
      * @return true if the loan is now fully paid, false otherwise
      */
-    private boolean checkLoanIsPaymentCompleted(Long loanId, List<LoanInstallment> unpaidInstallments) {
+    private boolean loanPaymentCompleted(Long loanId, List<LoanInstallment> unpaidInstallments) {
         boolean stillUnpaid = loanInstallmentRepository.existsByLoan_IdAndIsPaidFalse(loanId);
         if (!stillUnpaid) {
             Loan loan = unpaidInstallments.get(0).getLoan();
@@ -154,12 +149,12 @@ public class InstallmentPaymentService {
     /**
      * Builds a response DTO summarizing the installment payment.
      *
-     * @param numPaid number of installments that were paid
+     * @param numPaid      number of installments that were paid
      * @param totalPayment total amount paid
-     * @param allPaid whether the entire loan has been paid off
+     * @param allPaid      whether the entire loan has been paid off
      * @return a {@link PayedInstallmentDto} DTO
      */
-    private PayedInstallmentDto buildPayedInstallmentDto(int numPaid, BigDecimal totalPayment, boolean allPaid) {
+    private PayedInstallmentDto buildPaymentInstallmentDto(int numPaid, BigDecimal totalPayment, boolean allPaid) {
         PayedInstallmentDto dto = new PayedInstallmentDto();
         dto.setPayedInstallment(numPaid);
         dto.setTotalAmountSpent(totalPayment);

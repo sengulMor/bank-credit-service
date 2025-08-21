@@ -11,7 +11,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InstallmentValue {
     int[] values();
-    String message() default "Value is not allowed";
+
+    String message() default "";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

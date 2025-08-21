@@ -8,6 +8,7 @@ import com.bank.credit.service.repository.LoanInstallmentRepository;
 import com.bank.credit.service.util.LoanCalculator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -25,11 +26,11 @@ import java.util.stream.IntStream;
 @Service
 public class LoanInstallmentService {
 
-    private  final LoanInstallmentRepository loanInstallmentRepository;
-    private  final InstallmentMapper installmentMapper;
+    private final LoanInstallmentRepository loanInstallmentRepository;
+    private final InstallmentMapper installmentMapper;
 
     public LoanInstallmentService(LoanInstallmentRepository loanInstallmentRepository,
-                                  InstallmentMapper installmentMapper){
+                                  InstallmentMapper installmentMapper) {
         this.loanInstallmentRepository = loanInstallmentRepository;
         this.installmentMapper = installmentMapper;
     }

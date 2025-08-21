@@ -9,7 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public final class LoanSpecifications {
 
-    private LoanSpecifications() {}
+    private LoanSpecifications() {
+    }
 
     public static Specification<Loan> hasCustomerId(Long customerId) {
         return (root, query, cb) -> cb.equal(root.get("customer").get("id"), customerId);

@@ -1,6 +1,9 @@
 package com.bank.credit.service.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,17 +25,17 @@ public class LoanInstallment extends BaseEntity {
     @NotNull
     private BigDecimal amount;
 
-    private BigDecimal paidAmount;  //bezahlterBetrag
+    private BigDecimal paidAmount;
 
     @NotNull
-    private LocalDate dueDate;   //faelligkeitsdatum
+    private LocalDate dueDate;
 
-    private LocalDate paymentDate;  //zahlungsdatum
+    private LocalDate paymentDate;
 
     private boolean isPaid;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "loan_id", nullable = false)
+    @JoinColumn(name = "loan_id", referencedColumnName = "id", nullable = false)
     private Loan loan;
 
 }

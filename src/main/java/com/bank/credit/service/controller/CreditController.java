@@ -14,14 +14,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+
 @Slf4j
 @RestController
-@RequestMapping("/credit")
+@RequestMapping("/credits")
 public class CreditController {
 
     private final CreditService creditService;
 
-    public CreditController(CreditService creditService) {           //constructer dependency injection
+    public CreditController(CreditService creditService) {
         this.creditService = creditService;
     }
 
@@ -32,9 +33,9 @@ public class CreditController {
         return new ResponseEntity<>(creditService.create(dto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<CreditDto> getFilteredLoansByCustomer(@PathVariable("customerId") Long customerId,
+    public Page<CreditDto> getFilteredLoansByCustomer(@RequestParam Long customerId,
                                                       @RequestParam(required = false) Integer numberOfInstallment,
                                                       @RequestParam(required = false) Boolean isPaid,
                                                       @PageableDefault(sort = "loanAmount", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -47,4 +48,5 @@ public class CreditController {
                 .build();
         return creditService.getLoanByCustomer(filter, pageable);
     }
+
 }

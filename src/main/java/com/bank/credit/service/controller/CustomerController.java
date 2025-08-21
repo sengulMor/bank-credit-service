@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -30,5 +30,4 @@ public class CustomerController {
         log.info("Saving customer with name: {}", dto.getName());
         return new ResponseEntity<>(customerService.create(dto), HttpStatus.CREATED);
     }
-
 }

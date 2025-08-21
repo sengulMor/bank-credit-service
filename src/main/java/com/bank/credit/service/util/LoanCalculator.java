@@ -10,7 +10,6 @@ public final class LoanCalculator {
 
     /**
      * Calculates the total loan repayment amount (principal + interest).
-     *
      * Formula: total = principal × (1 + interestRate)
      *
      * @param principal    the loan amount
@@ -33,28 +32,11 @@ public final class LoanCalculator {
     }
 
     /**
-     * Calculates the equal installment amount directly from loan amount and interest rate.
-     *
-     * @param principal    the original loan amount
-     * @param interestRate the interest rate
-     * @param numberOfInstallments number of installments
-     * @return installment amount
-     */
-    public static BigDecimal calculateInstallmentAmount(
-            BigDecimal principal,
-            BigDecimal interestRate,
-            int numberOfInstallments) {
-
-        BigDecimal total = calculateTotalRepayment(principal, interestRate);
-        return calculateInstallmentAmount(total, numberOfInstallments);
-    }
-
-    /**
      * Calculates the customer's available credit limit.
      *
      * @param creditLimit the total credit limit
      * @param usedLimit   the already used credit
-     * @return available credit (may be zero or negative if overused)
+     * @return available credit (maybe zero or negative if overused)
      */
     public static BigDecimal calculateAvailableLimit(BigDecimal creditLimit, BigDecimal usedLimit) {
         return creditLimit.subtract(usedLimit);
