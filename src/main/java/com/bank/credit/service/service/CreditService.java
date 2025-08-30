@@ -59,13 +59,14 @@ public class CreditService {
      * @return the saved loan as a CreditDto
      * @throws CustomerNotFoundException if the customer does not exist
      */
+    // @Transactional(rollbackFor = Exception.class)
     @Transactional
     public CreditDto create(CreditDto dto) {
         BigDecimal totalAmount = LoanCalculator.calculateTotalRepayment(dto.getLoanAmount(), dto.getInterestRate());
         Customer customer = getCustomer(dto);
         Loan loan = loanMapper.toEntity(dto, customer, totalAmount);
         List<LoanInstallment> installments = loanInstallmentService.buildLoanInstallments(loan);
-        loan.setInstallments(installments);
+        loan.addInstallments(installments);
         Loan savedLoan = loanRepository.save(loan);
         updateUsedCreditLimit(totalAmount, customer);
         return loanMapper.toDto(savedLoan);
@@ -103,7 +104,7 @@ public class CreditService {
      * @return a page of {@link CreditDto} matching the given filters
      * @throws IllegalArgumentException if customerId in the filter is null
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)   //tells Spring this transaction won’t modify data, which can improve performance.
     public Page<CreditDto> getLoanByCustomer(LoanFilter filter, Pageable pageable) {
         Specification<Loan> spec = LoanSpecifications.hasCustomerId(filter.getCustomerId());
         if (filter.getNumberOfInstallment() != null) {
