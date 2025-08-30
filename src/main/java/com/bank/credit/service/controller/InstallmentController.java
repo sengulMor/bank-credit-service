@@ -4,11 +4,11 @@ import com.bank.credit.service.dto.InstallmentDto;
 import com.bank.credit.service.dto.PayedInstallmentDto;
 import com.bank.credit.service.service.InstallmentPaymentService;
 import com.bank.credit.service.service.LoanInstallmentService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class InstallmentController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PayedInstallmentDto> payInstallment(@Validated @RequestBody InstallmentDto dto) {
+    public ResponseEntity<PayedInstallmentDto> payInstallment(@Valid @RequestBody InstallmentDto dto) {
         log.info("Paying installment for loan id {}", dto.getLoanId());
         return new ResponseEntity<>(installmentPaymentService.payInstallment(dto), HttpStatus.CREATED);
     }

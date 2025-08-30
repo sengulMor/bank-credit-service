@@ -2,11 +2,11 @@ package com.bank.credit.service.controller;
 
 import com.bank.credit.service.dto.CustomerDto;
 import com.bank.credit.service.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ public class CustomerController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CustomerDto> create(@Validated @RequestBody CustomerDto dto) {
+    public ResponseEntity<CustomerDto> create(@Valid @RequestBody CustomerDto dto) {
         log.info("Saving customer with name: {}", dto.getName());
         return new ResponseEntity<>(customerService.create(dto), HttpStatus.CREATED);
     }

@@ -14,6 +14,12 @@ import java.util.Arrays;
 @Component
 public class LoggingAspect {
 
+    // or I can also stop the execution of the method call, loging, handle exceptions, execution time
+    // This pointcut matches all public methods inside service package
+    // “I wrap this method like a sandwich — I can do things before, after, or even replace it.”
+    // joinPoint is here this --> com.bank.credit.service.service..*(..)
+    // to summarize the purpose of @Around is --> "here will all done before method call and after, I can modify the input parameters"
+
     /**
      * Around advice that wraps the execution of all public methods in the service package.
      * Measures execution time and logs it.
@@ -36,6 +42,12 @@ public class LoggingAspect {
         return result;
     }
 
+    //Before every method execution in com.bank.credit.service.service.CustomerService.* it should run this method here,
+    // I log method name and the method parameter in this method,
+    // additional it can do other checks before this method execution like security (has the use the role ADMIN)
+    // joinPoint is here this --> com.bank.credit.service.service.CustomerService.*(..)
+    // to summarize the purpose of @Before is --> "Hey, do this first every time this method is called."
+
     /**
      * Before advice for all methods in CustomerService.
      * Logs method name and parameters before execution.
@@ -47,6 +59,12 @@ public class LoggingAspect {
     public void logBefore(JoinPoint joinPoint) {
         log.info("Calling method: {} with args {}", joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));
     }
+
+    //every time after finishing a method in one of this services here com.bank.credit.service.service.CustomerService.*, run this method
+    // here only the method name will printed in console
+    // but I can also manipulate the result if is nessesary
+    // joinPoint is here this --> com.bank.credit.service.service.CustomerService.*(..)
+    // to summarize the purpose of @AfterReturning is --> “After this method finishes successfully, do this next.”
 
     /**
      * AfterReturning advice for all methods in CustomerService.
@@ -63,6 +81,12 @@ public class LoggingAspect {
         }
     }
 
+    //every time after finishing a method in one of this services here com.bank.credit.service.service.CustomerService.*, run this method
+    // here only the method name will printed in console
+    // but I can also do some clean up operations or logging
+    // joinPoint is here this --> com.bank.credit.service.service.CustomerService.*(..)
+    // to summarize the purpose of @After is --> "Hey, do this after every time this method is finished."
+
     /**
      * After advice for all methods in CustomerService.
      * Runs after the method finishes, regardless of success or exception.
@@ -74,6 +98,12 @@ public class LoggingAspect {
     public void logAfter(JoinPoint joinPoint) {
         log.info("Method returned: {}", joinPoint.getSignature().getName());
     }
+
+    //only when a exception is throwed in the methods of com.bank.credit.service.service.CustomerService.*(..),
+    // then will this method run,
+    // I can also do here some other handlings send a alert(like create a event and send via docker, send a email), clean up some resources
+    // joinPoint is here this --> com.bank.credit.service.service.CustomerService.*(..)
+    // to summarize the purpose of @AfterThrowing is --> “If this method crashes, do this.”
 
     /**
      * AfterThrowing advice for all methods in CustomerService.
