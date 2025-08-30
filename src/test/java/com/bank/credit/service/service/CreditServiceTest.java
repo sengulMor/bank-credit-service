@@ -53,7 +53,7 @@ class CreditServiceTest {
         Loan loan = getLoan(customer);
         LoanInstallment loanInstallment = getLoanInstallment();
         Loan savedLoan = getLoan(customer);
-        savedLoan.setInstallments(List.of(loanInstallment));
+        savedLoan.addInstallments(List.of(loanInstallment));
         CreditDto resultDto = getCreditDto(new BigDecimal("1100"));
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(loanMapper.toEntity(Mockito.eq(creditDto), Mockito.any(Customer.class), Mockito.any(BigDecimal.class))).thenReturn(loan);
